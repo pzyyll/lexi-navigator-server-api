@@ -1,0 +1,3 @@
+[submodule "libs/pyhelper"]
+	path = libs/pyhelper
+	url = https://github.com/pzyyll/python_common.git
