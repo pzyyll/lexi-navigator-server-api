@@ -1,3 +1,9 @@
 fastapi
-uvicorn
+uvicorn[standard]
 mongoengine
+pydantic-settings
+python-jose[cryptography]
+passlib[bcrypt]
+APScheduler
+httpx
+python-multipart

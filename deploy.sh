@@ -209,6 +209,17 @@ init_pyenv() {
     $PYTHON -m pip install -r $DEPS_REQUIREMENTS_FILE
 }
 
+run() {
+    color_echo "Running server..."
+    cd $PROJECT_PATH || exit_status 1
+    source .venv/bin/activate
+    uvicorn app:app --reload
+}
+
+init_submodule() {
+    git submodule update --init --recursive || exit_status 1
+}
+
 help() {
     echo "Usage: $0 [init-pyenv|help]"
     echo "  init-pyenv: Initialize python running environment"
@@ -223,6 +234,12 @@ initialize_variables
 case "$1" in
 "init-pyenv")
     init_pyenv
+    ;;
+"init-submodule")
+    init_submodule
+    ;;
+"run")
+    run
     ;;
 "help")
     help
