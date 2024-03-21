@@ -1,5 +1,5 @@
 from . import router
-from fastapi import Request
+from fastapi import Request, Depends
 
 
 @router.api_route("/completion", methods=["GET", "POST"])

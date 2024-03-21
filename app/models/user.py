@@ -24,10 +24,6 @@ class UserCheck(BaseModel):
         return v
 
 
-class UserLoginForm(UserCheck):
-    cftoken: str
-
-
 class UserSignUpForm(UserCheck):
     invitation_code: str
     # email: str = Field(None, min_length=5, max_length=50)
@@ -53,7 +49,7 @@ class UserInDB(BaseDocument):
     userid = UUIDField(parimary_key=True,
                        required=True,
                        unique=True,
-                       default=uuid.uuid4())
+                       default=uuid.uuid4().hex)
     username = StringField(required=True, unique=True)
     password = StringField(required=True)
     email = EmailField()
