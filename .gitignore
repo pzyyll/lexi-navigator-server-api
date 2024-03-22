@@ -12,6 +12,7 @@ build/
 develop-eggs/
 !**/bootstrap/dist/
 dist/
+!/app/static/dist/
 downloads/
 eggs/
 .eggs/
