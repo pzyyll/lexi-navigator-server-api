@@ -34,12 +34,13 @@ async def verify_cftoken(cftoken: str):
 @router.api_route("/login", methods=["POST"])
 async def login(form_data: OAuth2PasswordRequestForm = Depends(),
                 cftoken: str | None = Form(default=None)):
-    print("login form_data", form_data)
-    print("login cftoken", cftoken)
-    if True or settings.cftoken_enable:
+    # print("login form_data", form_data)
+    # print("login cftoken", cftoken)
+    if settings.cftoken_enable:
         # check captcha token
         await verify_cftoken(cftoken)
     user: UserInDB = await UserInDB.async_find_one(username=form_data.username)
+    # print("login user", user)
     if not user:
         raise HTTPException(status_code=400, detail="Incorrect username")
     if not user.verify_passwd(form_data.password):

@@ -38,7 +38,7 @@ async def translate_text(
         user: UserInDB = Depends(get_token_user)):
     # print("translate_text Content", request_data)
     # print("translate_text User:", user)
-    async with translate_api.api_type_context(api_type):
+    async with translate_api.async_api_type_context(api_type):
         result = await translate_api.async_translate_text(text,
                                                           to_lang=tl,
                                                           from_lang=sl)
@@ -52,6 +52,6 @@ async def languages(
         dlc: Annotated[str, "display language code"] = None,
         api_type: str = None,
         user: UserInDB = Depends(get_token_user)):
-    async with translate_api.api_type_context(api_type):
+    async with translate_api.async_api_type_context(api_type):
         results = await translate_api.async_list_languages(dlc)
-        return LanguagesResponse(languages=results)
+        return LanguagesResponse(languages=[Language(**lang) for lang in results])

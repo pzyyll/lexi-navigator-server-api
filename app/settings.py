@@ -9,7 +9,7 @@ path_helper = PathHelper()
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(case_sensitive=False,
                                       env_prefix="LN_",
-                                      env_file=".env",
+                                      env_file=".env-release",
                                       validate_default=False)
 
     app_name: str = "Lexi Navigator"

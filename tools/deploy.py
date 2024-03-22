@@ -25,7 +25,7 @@ def get_template_outout_path(template_name, output_path, rename=""):
 
 
 DEFAULT_ENV_FILE_TEMPLATE, DEFAULT_ENV_FILE = get_template_outout_path(
-    "env.template", PROJECT_PATH, rename=".env")
+    "env.template", PROJECT_PATH, rename=".env-release")
 
 DEFAULT_SERVICE_TEMPLATE, DEFAULT_SERVICE_FILE = get_template_outout_path(
     "service.template", "/etc/systemd/system/", rename=f"{PROJECT_NAME}.service")

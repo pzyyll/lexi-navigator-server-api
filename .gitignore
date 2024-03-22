@@ -170,3 +170,4 @@ flask_session
 .DS_Store
 .vscode/
 app-data/
+.env*

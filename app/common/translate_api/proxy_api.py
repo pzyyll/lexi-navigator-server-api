@@ -203,7 +203,7 @@ class ProxyAPIs(BaseTranslateAPI):
                 raise TranslateError(
                     'Default API failed to list languages.') from exc
 
-        for api in self._apis.items():
+        for api_type, api in self._apis.items():
             try:
                 return api.list_languages(display_language_code)
             except Exception as e:
