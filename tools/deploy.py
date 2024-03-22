@@ -194,7 +194,7 @@ def init_service_conf():
                               str(DEFAULT_LOG_PATH / "error.log"))
     content = content.replace("{{OPTIONS}}", "")
 
-    write_to_file("./test.service", content)
+    write_to_file(DEFAULT_SERVICE_FILE, content)
 
 
 def init_default_app_data_dir():
