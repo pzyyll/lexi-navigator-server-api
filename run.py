@@ -7,6 +7,9 @@ import importlib
 import dotenv
 
 dotenv.load_dotenv()
+curent_dotenv = os.path.join(os.path.dirname(__file__), ".env")
+if os.path.exists(curent_dotenv):
+    dotenv.load_dotenv(curent_dotenv)
 
 parser = argparse.ArgumentParser(description="Run the FastAPI server")
 parser.add_argument("--config", type=str, help="Path to the config file")
