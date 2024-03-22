@@ -31,7 +31,7 @@ DEFAULT_SERVICE_TEMPLATE, DEFAULT_SERVICE_FILE = get_template_outout_path(
     "service.template", "/etc/systemd/system/", rename=f"{PROJECT_NAME}.service")
 
 DEFAULT_UVICORN_TEMPLATE, DEFAULT_UVICORN_CONF = get_template_outout_path(
-    "uvicorn.conf.template", DEFAULT_CONFIG_PATH)
+    "uvicorn_conf.py.template", DEFAULT_CONFIG_PATH)
 
 
 colorama.init(autoreset=True)
