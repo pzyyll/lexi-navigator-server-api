@@ -3,7 +3,7 @@
 # from uvicorn import Config
 
 # default: 127.0.0.1
-host = {{HOST}}
+host = "{{HOST}}"
 # default: 8000
 port = {{PORT}}
 reload = False
