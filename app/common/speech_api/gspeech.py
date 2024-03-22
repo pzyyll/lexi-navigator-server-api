@@ -6,6 +6,8 @@ from google.cloud import texttospeech
 
 
 class GSpeechAsyncClient:
+    def __init__(self, conf=None):
+        self.init(conf)
 
     def init(self, conf=None):
         self.conf = conf.copy if conf else {}
