@@ -9,6 +9,7 @@ httpx
 python-multipart
 langdetect
 google-cloud-translate
+google-cloud-texttospeech
 PySocks
 colorama
 python-dotenv
