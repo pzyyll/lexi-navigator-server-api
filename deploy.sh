@@ -4,6 +4,7 @@ PROJECT_NAME="LexiNavigatorServerAPI"
 CURRENT_PATH="$(pwd)"
 USER=$(whoami)
 GROUP=$(id -g -n $USER)
+PROJECT_REPOS="https://github.com/pzyyll/lexi-navigator-server-api.git"
 
 color_echo() {
     # 定义颜色
@@ -148,6 +149,34 @@ check_git() {
     fi
 }
 
+mk_dir() {
+    local dir="$1"
+    local user=${USER:-$(whoami)}
+    local group=$(id -gn $user)
+
+    if [ -d "$dir" ]; then
+        echo "Directory $dir already exists."
+        return 1
+    fi
+
+    local root_dir="$dir"   # return the first directory that does not exist
+    local parent_dir=$(dirname "$dir")
+
+    while [ ! -d "$parent_dir" ]; do
+        root_dir="$parent_dir"
+        parent_dir=$(dirname "$parent_dir")
+    done
+
+    if sudo mkdir -p "$dir"; then
+        echo "$root_dir"
+        sudo chown -R $user:$group "$root_dir"
+        return 0
+    else
+        echo "Failed to create directory $dir."
+        return 1
+    fi
+}
+
 prompt_yes_or_no() {
     while true; do
         read -p "$1 $(color_echo "[yes/no]" yellow italic): " answer
@@ -213,11 +242,17 @@ run() {
     color_echo "Running server..."
     cd $PROJECT_PATH || exit_status 1
     source .venv/bin/activate
-    uvicorn app:app --reload
+    $PYTHON run.py
 }
 
 init_submodule() {
     git submodule update --init --recursive || exit_status 1
+}
+
+init_conf() {
+    cd $PROJECT_PATH || exit_status 1
+    source .venv/bin/activate
+    python ./tools/deploy.py init-conf
 }
 
 help() {
@@ -232,6 +267,11 @@ check_git
 initialize_variables
 
 case "$1" in
+"init")
+    init_pyenv
+    init_submodule
+    init_conf
+    ;;
 "init-pyenv")
     init_pyenv
     ;;

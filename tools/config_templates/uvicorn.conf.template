@@ -1,0 +1,11 @@
+# This file is used to configure the uvicorn server
+# https://www.uvicorn.org/settings/
+# from uvicorn import Config
+
+# default: 127.0.0.1
+host = {{HOST}}
+# default: 8000
+port = {{PORT}}
+reload = False
+log_level = "info"
+workers = 1

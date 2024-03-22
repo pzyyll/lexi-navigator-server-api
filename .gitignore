@@ -168,3 +168,4 @@ flask_session
 .sass-cache/
 .DS_Store
 .vscode/
+app-data/

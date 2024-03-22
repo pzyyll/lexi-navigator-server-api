@@ -36,7 +36,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(),
                 cftoken: str | None = Form(default=None)):
     print("login form_data", form_data)
     print("login cftoken", cftoken)
-    if settings.cftoken_enable:
+    if True or settings.cftoken_enable:
         # check captcha token
         await verify_cftoken(cftoken)
     user: UserInDB = await UserInDB.async_find_one(username=form_data.username)

@@ -7,3 +7,8 @@ passlib[bcrypt]
 APScheduler
 httpx
 python-multipart
+langdetect
+google-cloud-translate
+PySocks
+colorama
+python-dotenv
