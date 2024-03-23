@@ -255,6 +255,17 @@ init_conf() {
     python ./tools/deploy.py init-conf
 }
 
+init_service() {
+    cd $PROJECT_PATH || exit_status 1
+    source .venv/bin/activate
+    PY=$(which python)
+    sudo $PY ./tools/deploy.py init-service
+}
+
+run_mongodb() {
+    sudo mongod --config /etc/mongod.conf --fork
+}
+
 help() {
     echo "Usage: $0 [init-pyenv|help]"
     echo "  init-pyenv: Initialize python running environment"
@@ -277,6 +288,9 @@ case "$1" in
     ;;
 "init-submodule")
     init_submodule
+    ;;
+"run-mongodb")
+    run_mongodb
     ;;
 "run")
     run
