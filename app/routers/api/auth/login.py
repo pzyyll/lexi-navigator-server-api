@@ -45,5 +45,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(),
         raise HTTPException(status_code=400, detail="Incorrect username")
     if not user.verify_passwd(form_data.password):
         raise HTTPException(status_code=400, detail="Incorrect password")
-    token = await create_access_token(user.userid)
+    user.login_token_version += 1
+    await user.async_save()
+    token = await create_access_token(user.userid, user.login_token_version)
     return Token(access_token=token, token_type="bearer")
