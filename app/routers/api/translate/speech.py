@@ -10,7 +10,7 @@ from app.models.user import UserInDB
 from app.common.speech_api.gspeech import GSpeechAsyncClient
 from app.settings import settings
 
-from urllib.parse import urlencode
+from urllib.parse import quote
 
 gspeech = GSpeechAsyncClient()
 
@@ -20,7 +20,7 @@ temp_dir = pathlib.Path(settings.static_path, relative_temp).resolve()
 
 async def get_mp3_response(text, language_code, user: UserInDB):
     audio_content = await gspeech.text_to_speech(text, language_code)
-    file_name = f"{user.userid}{language_code}{urlencode(text)}.mp3"
+    file_name = f"{user.userid}{language_code}{quote(text, safe='')}.mp3"
 
     def _write_file():
         temp_dir.mkdir(parents=True, exist_ok=True)

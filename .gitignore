@@ -171,3 +171,4 @@ flask_session
 .vscode/
 app-data/
 .env*
+**/temp/*
