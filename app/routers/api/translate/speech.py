@@ -15,8 +15,9 @@ async def get_mp3_response(audio_content):
     loop = asyncio.get_event_loop()
     mp3_file_io = await loop.run_in_executor(None, io.BytesIO, audio_content)
     return StreamingResponse(
-        mp3_file_io, media_type="audio/mpeg",
-        headers={"Content-Disposition": "attachment; filename=speech.mp3"})
+        mp3_file_io,
+        media_type="audio/mpeg",
+        headers={"Content-Type": "audio/mpeg", "Content-Disposition": "attachment; filename=speech.mp3"})
 
 
 @router.get("/text-to-speech")
