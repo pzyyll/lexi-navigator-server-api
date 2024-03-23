@@ -23,6 +23,7 @@ class Settings(BaseSettings):
     token_expire_days: int = 15
     app_data_path: str = "../app-data"
     translate_config: str | None = None
+    static_path: str = os.path.join(app_path, "static/dist")
 
 
 settings = Settings()

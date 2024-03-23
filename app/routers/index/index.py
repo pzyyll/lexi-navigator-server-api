@@ -2,12 +2,12 @@ from . import router
 from fastapi.responses import HTMLResponse, FileResponse
 from functools import partial
 
-from app.settings import app_path
+from app.settings import settings
 
 import os
 import asyncio
 
-index_static = os.path.join(app_path, "static/dist")
+index_static = settings.static_path
 
 
 def read_file_sync(path):

@@ -98,7 +98,7 @@ def init_uvicorn_conf():
 def init_env_conf():
     if pathlib.Path(DEFAULT_ENV_FILE).exists():
         if not prompt_yes_or_no(
-            f"{colorama.Fore.YELLOW}{DEFAULT_ENV_FILE} already exists. Do you want to overwrite it?"
+                f"{colorama.Fore.YELLOW}{DEFAULT_ENV_FILE} already exists. Do you want to overwrite it?"
         ):
             return
 
@@ -109,13 +109,15 @@ def init_env_conf():
     content = content.replace("{{SECRET_KEY}}", secrets.token_hex(32))
     content = content.replace("{{SIGNUP_SECRET_KEY}}", secrets.token_hex(32))
     content = content.replace("{{APP_DATA_PATH}}", str(DEFAULT_APP_DATA_PATH))
-
+    content = content.replace("{{STATIC_PATH}}", pathlib.Path(
+        DEFAULT_APP_DATA_PATH, "static/dist").resolve())
     write_to_file(DEFAULT_ENV_FILE, content)
 
 
 def init_nginx_conf():
     nginx_config_dir = input(
-        f"{colorama.Fore.YELLOW}Nginx config path(default: {colorama.Fore.GREEN}/etc/nginx): ")
+        f"{colorama.Fore.YELLOW}Nginx config path(default: {colorama.Fore.GREEN}/etc/nginx): "
+    )
     nginx_config_dir = nginx_config_dir or "/etc/nginx"
     if not os.path.isdir(nginx_config_dir):
         print(f"{colorama.Fore.RED}Nginx not support!!!")
@@ -126,25 +128,27 @@ def init_nginx_conf():
 
     if pathlib.Path(nginx_config_dir).exists():
         if not prompt_yes_or_no(
-            f"{colorama.Fore.YELLOW}{nginx_config_dir} already exists. Do you want to overwrite it?"
+                f"{colorama.Fore.YELLOW}{nginx_config_dir} already exists. Do you want to overwrite it?"
         ):
             return
 
     if os.path.isdir(os.path.join(nginx_config_dir, "sites-available")):
-        nginx_config_file = os.path.join(
-            nginx_config_dir, "sites-available", f"{PROJECT_NAME}.conf")
+        nginx_config_file = os.path.join(nginx_config_dir, "sites-available",
+                                         f"{PROJECT_NAME}.conf")
     elif os.path.isdir(os.path.join(nginx_config_dir, "conf.d")):
-        nginx_config_file = os.path.join(
-            nginx_config_dir, "conf.d", f"{PROJECT_NAME}.conf")
+        nginx_config_file = os.path.join(nginx_config_dir, "conf.d",
+                                         f"{PROJECT_NAME}.conf")
     else:
         print(f"{colorama.Fore.RED}Nginx config path not found!!!")
         return
 
     domain = input(
-        f"{colorama.Fore.YELLOW}Enter the domain name or ip (default {colorama.Fore.GREEN}: 127.0.0.1): ")
+        f"{colorama.Fore.YELLOW}Enter the domain name or ip (default {colorama.Fore.GREEN}: 127.0.0.1): "
+    )
 
     port = input(
-        f"{colorama.Fore.YELLOW}Enter the port (default {colorama.Fore.GREEN}: 8888): ")
+        f"{colorama.Fore.YELLOW}Enter the port (default {colorama.Fore.GREEN}: 8888): "
+    )
 
     local_server_ip = input(
         f"{colorama.Fore.YELLOW}Enter the local server ip"
@@ -159,9 +163,11 @@ def init_nginx_conf():
     content = content.replace("{{LOCAL_IP}}", local_server_ip)
 
     print(
-        f"Run {colorama.Fore.RED}sudo systemctl reload nginx{colorama.Fore.RESET} to apply changes.")
+        f"Run {colorama.Fore.RED}sudo systemctl reload nginx{colorama.Fore.RESET} to apply changes."
+    )
     print(
-        f"Additional modifications are in the file: {colorama.Fore.GREEN}{nginx_config_file}")
+        f"Additional modifications are in the file: {colorama.Fore.GREEN}{nginx_config_file}"
+    )
 
 
 def init_service_conf():

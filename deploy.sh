@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PROJECT_NAME="LexiNavigatorServerAPI"
+PROJECT_NAME="lexinavigator"
 CURRENT_PATH="$(pwd)"
 USER=$(whoami)
 GROUP=$(id -g -n $USER)
@@ -264,6 +264,14 @@ init_service() {
 
 run_mongodb() {
     sudo mongod --config /etc/mongod.conf --fork
+}
+
+up() {
+    cd $PROJECT_PATH || exit_status 1
+    source .venv/bin/activate
+    git pull
+    sudo systemctl restart $PROJECT_NAME
+    sudo systemctl status $PROJECT_NAME
 }
 
 help() {
