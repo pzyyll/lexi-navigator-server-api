@@ -10,7 +10,7 @@ from app.models.user import UserInDB
 from app.common.speech_api.gspeech import GSpeechAsyncClient
 from app.settings import settings
 
-from urllib.parse import urlencode
+from urllib.parse import quote
 
 gspeech = GSpeechAsyncClient()
 
