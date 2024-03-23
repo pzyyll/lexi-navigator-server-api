@@ -92,7 +92,7 @@ get_python_env() {
             fi
         done
     fi
-    color_echo "Python version is OK: $(PYTHON --version)" yellow
+    color_echo "Python version is OK: $($PYTHON --version)" yellow
 }
 
 check_git() {
