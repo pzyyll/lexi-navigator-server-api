@@ -13,3 +13,4 @@ google-cloud-texttospeech
 PySocks
 colorama
 python-dotenv
+openai
