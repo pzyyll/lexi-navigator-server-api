@@ -2,8 +2,9 @@ from . import router
 from ..auth.token import get_token_user
 from app.models.user import UserInDB
 from app.utils.translate import translate_api
+from app.utils.limiter import limiter
 
-from fastapi import Request, Depends
+from fastapi import Depends, Request
 from pydantic import BaseModel, Field
 from typing import Annotated
 
@@ -36,12 +37,14 @@ class LanguagesResponse(BaseModel):
 @router.get(
     "/text", response_model=TranslateResponse, response_model_exclude_unset=True
 )
+@limiter.limit("5/second")
 async def translate_text(
     text: str,
     sl: Annotated[str, "source language"] = None,
     tl: Annotated[str, "target language"] = None,
     api_type: Annotated[str, "api type e.g. 'google'|'deepl'"] = None,
     user: UserInDB = Depends(get_token_user),
+    request: Request = None,
 ):
     # print("translate_text Content", request_data)
     # print("translate_text User:", user)
@@ -58,9 +61,11 @@ async def translate_text(
 @router.post(
     "/text", response_model=TranslateResponse, response_model_exclude_unset=True
 )
+@limiter.limit("5/second")
 async def translate_text_post(
     request_data: TranslateRequest,
     user: UserInDB = Depends(get_token_user),
+    request: Request = None,
 ):
     # print("translate_text Content", request_data)
     # print("translate_text User:", user)
@@ -77,10 +82,12 @@ async def translate_text_post(
 
 
 @router.get("/languages")
+@limiter.limit("5/second")
 async def languages(
     dlc: Annotated[str, "display language code"] = None,
     api_type: str = None,
     user: UserInDB = Depends(get_token_user),
+    request: Request = None,
 ):
     async with translate_api.async_api_type_context(api_type):
         results = await translate_api.async_list_languages(dlc)
