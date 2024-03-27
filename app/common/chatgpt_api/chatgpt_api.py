@@ -1,3 +1,4 @@
+import logging
 from openai import OpenAI
 
 
@@ -9,6 +10,9 @@ class ChatCompletion:
 
     def set_system_prompt(self, prompt: str):
         self.system_prompt = prompt
+
+    def clear_history(self):
+        self.chat_history = []
 
     def chat_nohistory(
         self,
@@ -34,14 +38,24 @@ class ChatCompletion:
         model="gpt-3.5-turbo-16k",
         **kwargs,
     ) -> str:
-        msgs = [{"role": "system", "content": system_prompt}]
-        msgs.extend(self.chat_history)
-        msgs.append({"role": "user", "content": prompt})
+        if not self.chat_history:
+            self.chat_history.append({"role": "system", "content": system_prompt})
 
-        response = self.client.chat.completions.create(
-            model=model,
-            messages=msgs,
-            **kwargs,
-        )
+        msgs = self.chat_history + [{"role": "user", "content": prompt}]
 
-        return response.choices[0].message.content
+        try:
+            response = self.client.chat.completions.create(
+                model=model,
+                messages=msgs,
+                **kwargs,
+            )
+
+            res_message = response.choices[0].message
+            self.chat_history.append(
+                {"role": res_message.role, "content": res_message.content}
+            )
+
+            return res_message.content
+        except Exception as e:
+            logging.error(f"Failed to chat: {e}")
+            return None
