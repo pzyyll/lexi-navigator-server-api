@@ -10,6 +10,7 @@ python-multipart
 langdetect
 google-cloud-translate
 google-cloud-texttospeech
+google-cloud-vision
 PySocks
 colorama
 python-dotenv

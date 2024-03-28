@@ -4,9 +4,15 @@ from app.models.user import UserInDB
 from app.utils.translate import translate_api
 from app.utils.limiter import limiter
 
-from fastapi import Depends, Request
+from fastapi import Depends, Request, Form
 from pydantic import BaseModel, Field
 from typing import Annotated
+from fastapi import UploadFile, File
+
+from app.common.google_api.gvision import GoogleVision
+
+
+gvision = GoogleVision()
 
 
 class TranslateRequest(BaseModel):
@@ -32,6 +38,10 @@ class Language(BaseModel):
 
 class LanguagesResponse(BaseModel):
     languages: list[Language]
+
+
+class TranslateImageResponse(TranslateResponse):
+    detected_text: str | None
 
 
 @router.get(
@@ -92,3 +102,28 @@ async def languages(
     async with translate_api.async_api_type_context(api_type):
         results = await translate_api.async_list_languages(dlc)
         return LanguagesResponse(languages=[Language(**lang) for lang in results])
+
+
+@router.post("/translate-image")
+@limiter.limit("5/second")
+async def translate_image(
+    file: UploadFile = File(...),
+    sl: Annotated[str, "source language"] = Form(default=None),
+    tl: Annotated[str, "target language"] = Form(default=None),
+    api_type: Annotated[str, "api type e.g. 'google'|'deepl'"] = Form(default=None),
+    user: UserInDB = Depends(get_token_user),
+    request: Request = None,
+):
+    image_content = await file.read()
+    detected_text = await gvision.async_text_from_image_content(image_content)
+    async with translate_api.async_api_type_context(api_type):
+        result = await translate_api.async_translate_text(
+            detected_text,
+            to_lang=tl,
+            from_lang=sl,
+        )
+        return TranslateImageResponse(
+            text=[result["translate_text"]],
+            detected_source_language=result.get("detected_language_code"),
+            detected_text=detected_text,
+        )
