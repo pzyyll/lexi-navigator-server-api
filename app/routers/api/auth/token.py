@@ -55,7 +55,7 @@ async def get_token_user(token: str = Depends(oauth2_scheme)):
     if user is None:
         raise HTTPException(status_code=401,
                             detail="Invalid token, user not found")
-    token_type = payload.get("aud")
+    token_type = payload.get("aty")
     if token_type == EnumTokenType.Login:
         if user.login_token_version != payload.get("ver"):
             raise HTTPException(status_code=401,
@@ -64,6 +64,8 @@ async def get_token_user(token: str = Depends(oauth2_scheme)):
         if user.api_token_version != payload.get("ver"):
             raise HTTPException(status_code=401,
                                 detail="Invalid token version")
+    else:
+        raise HTTPException(status_code=401, detail=f"Invalid token type, {token_type}")
     return user
 
 
