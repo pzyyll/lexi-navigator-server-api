@@ -29,6 +29,11 @@ class Language(BaseModel):
     language_code: str
 
 
+class DetectLanguage(BaseModel):
+    language_code: str
+    confidence: float
+
+
 class LanguagesResponse(BaseModel):
     languages: list[Language]
 
@@ -85,3 +90,16 @@ async def languages(
     async with translate_api.async_api_type_context(api_type):
         results = await translate_api.async_list_languages(dlc)
         return LanguagesResponse(languages=[Language(**lang) for lang in results])
+
+
+@router.get("/detect")
+async def detect(
+    text: str,
+    api_type: str = None,
+    user: UserInDB = Depends(get_token_user),
+):
+    async with translate_api.async_api_type_context(api_type):
+        result = await translate_api.async_detect_language(text)
+        return DetectLanguage(
+            language_code=result["language_code"], confidence=result["confidence"]
+        )
