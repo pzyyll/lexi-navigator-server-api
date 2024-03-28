@@ -36,6 +36,11 @@ class Language(BaseModel):
     language_code: str
 
 
+class DetectLanguage(BaseModel):
+    language_code: str
+    confidence: float
+
+
 class LanguagesResponse(BaseModel):
     languages: list[Language]
 
@@ -126,4 +131,17 @@ async def translate_image(
             text=[result["translate_text"]],
             detected_source_language=result.get("detected_language_code"),
             detected_text=detected_text,
+        )
+
+
+@router.get("/detect")
+async def detect(
+    text: str,
+    api_type: str = None,
+    user: UserInDB = Depends(get_token_user),
+):
+    async with translate_api.async_api_type_context(api_type):
+        result = await translate_api.async_detect_language(text)
+        return DetectLanguage(
+            language_code=result["language_code"], confidence=result["confidence"]
         )
