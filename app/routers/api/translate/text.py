@@ -49,6 +49,10 @@ class TranslateImageResponse(TranslateResponse):
     detected_text: str | None
 
 
+class DetectImgResponse(BaseModel):
+    detected_text: str
+
+
 @router.get(
     "/text", response_model=TranslateResponse, response_model_exclude_unset=True
 )
@@ -132,6 +136,18 @@ async def translate_image(
             detected_source_language=result.get("detected_language_code"),
             detected_text=detected_text,
         )
+
+
+@router.post("/img-to-text")
+@limiter.limit("5/second")
+async def image_to_text(
+    file: UploadFile = File(...),
+    user: UserInDB = Depends(get_token_user),
+    request: Request = None,
+):
+    image_content = await file.read()
+    detected_text = await gvision.async_text_from_image_content(image_content)
+    return DetectImgResponse(detected_text=detected_text)
 
 
 @router.get("/detect")
