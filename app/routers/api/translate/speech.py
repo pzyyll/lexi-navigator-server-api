@@ -2,13 +2,14 @@ import io
 import asyncio
 import pathlib
 from . import router
-from fastapi import Depends
+from fastapi import Depends, Request
 from fastapi.responses import StreamingResponse
 from ..auth.token import get_token_user
 from app.models.user import UserInDB
 
 from app.common.speech_api.gspeech import GSpeechAsyncClient
 from app.settings import settings
+from app.utils.limiter import limiter
 
 from urllib.parse import quote
 
@@ -28,7 +29,11 @@ async def get_mp3_response(text, language_code, user: UserInDB):
 
 
 @router.get("/text-to-speech")
+@limiter.limit("5/second")
 async def text_to_speech(
-    text: str, language_code: str, user: UserInDB = Depends(get_token_user)
+    text: str,
+    language_code: str,
+    user: UserInDB = Depends(get_token_user),
+    request: Request = None,
 ):
     return await get_mp3_response(text, language_code, user)
