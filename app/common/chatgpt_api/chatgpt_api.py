@@ -1,61 +1,56 @@
-import logging
 from openai import OpenAI
 
 
-class ChatCompletion:
-    def __init__(self, *args, **kwargs):
-        self.client = OpenAI(*args, **kwargs)
-        self.system_prompt = "You are a helpful assistant."
-        self.chat_history = []
+class Chatbot:
 
-    def set_system_prompt(self, prompt: str):
-        self.system_prompt = prompt
+    def __init__(self) -> None:
+        self._chat_id_generator = 0
+        self._historys = {}
+        self._openai = OpenAI()
 
-    def clear_history(self):
-        self.chat_history = []
+    def CreateChatID(self):
+        self._chat_id_generator += 1
+        return self._chat_id_generator
 
-    def chat_nohistory(
-        self,
-        prompt: str,
-        system_prompt="You are a helpful assistant.",
-        model="gpt-3.5-turbo-16k",
-        **kwargs,
-    ):
-        response = self.client.chat.completions.create(
-            model=model,
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": prompt},
-            ],
-            **kwargs,
-        )
-        return response.choices[0].message.content
+    def GetHistoryMessages(self, chatid):
+        return self._historys.get(chatid, [])
 
-    def chat(
-        self,
-        prompt: str,
-        system_prompt="You are a helpful assistant.",
-        model="gpt-3.5-turbo-16k",
-        **kwargs,
-    ) -> str:
-        if not self.chat_history:
-            self.chat_history.append({"role": "system", "content": system_prompt})
-
-        msgs = self.chat_history + [{"role": "user", "content": prompt}]
-
+    def EditHistoryMessagesContent(self, chatid, idx, new_content):
         try:
-            response = self.client.chat.completions.create(
-                model=model,
-                messages=msgs,
-                **kwargs,
-            )
-
-            res_message = response.choices[0].message
-            self.chat_history.append(
-                {"role": res_message.role, "content": res_message.content}
-            )
-
-            return res_message.content
+            self._historys[chatid][idx]["content"] = new_content
         except Exception as e:
-            logging.error(f"Failed to chat: {e}")
-            return None
+            print("EditHistoryMessagesContent Error:", e)
+
+    def DelHistoryMessages(self, chatid, idx):
+        try:
+            self._historys[chatid].pop(idx)
+        except Exception as e:
+            print("DelHistoryMessages Error:", e)
+
+    def Chat(self, message, chatid=None, **kwargs):
+        history_messages = self._historys.setdefault(chatid,
+                                                     []) if chatid else None
+        completion = self.GetCompletion(message,
+                                        history_messages=history_messages,
+                                        **kwargs)
+        msg = completion.choices[0].message
+        if chatid:
+            history_messages.append({"role": "user", "content": message})
+            history_messages.append({"role": msg.role, "content": msg.content})
+        return msg.content
+
+    def GetCompletion(
+            self,
+            prompt,
+            model="gpt-3.5-turbo-0125",
+            system_prompt="You are ChatGPT, a large language model trained by OpenAI.",
+            history_messages: list | None = None,
+            **kwargs):
+        messages = [{"role": "system", "content": system_prompt}]
+        if history_messages and len(history_messages) > 0:
+            messages += history_messages
+        messages.append({"role": "user", "content": prompt})
+
+        return self._openai.chat.completions.create(model=model,
+                                                    messages=messages,
+                                                    **kwargs)
