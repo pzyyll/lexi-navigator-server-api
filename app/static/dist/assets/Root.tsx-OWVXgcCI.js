@@ -1,4 +1,4 @@
-import{k as t,s as o,I as s,a as e,j as n,C as i}from"./vendor-BdbgMDah.js";import{S as r}from"./Dashboard.tsx-By4d6ZQ0.js";const m=t`
+import{k as t,s as o,I as s,a as e,j as n,C as i}from"./vendor-BYq_hy3B.js";import{S as r}from"./Dashboard.tsx-kBXZiTD-.js";const m=t`
   0%, 100% { background-color: #f8f8f8; }
   50% { background-color: #f0f0f0; }
 `,f=t`

@@ -3,8 +3,13 @@ import asyncio
 
 
 class GoogleVision:
+
     def __init__(self):
-        self.client = vision.ImageAnnotatorClient()
+        try:
+            self.client = vision.ImageAnnotatorClient()
+        except Exception as e:
+            print("GoogleVision Error:", e)
+            self.client = None
 
     def text_from_image(self, image_path):
         with open(image_path, "rb") as image_file:
@@ -19,6 +24,5 @@ class GoogleVision:
 
     async def async_text_from_image_content(self, image_content):
         text = await asyncio.get_event_loop().run_in_executor(
-            None, self.text_from_image_content, image_content
-        )
+            None, self.text_from_image_content, image_content)
         return text

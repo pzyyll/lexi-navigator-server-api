@@ -5,5 +5,5 @@ Lexi Navigator Server API
 git clone https://github.com/pzyyll/lexi-navigator-server-api.git lexin-server
 cd lexin-server
 bash ./deploy.sh init
-
+bash ./deploy.sh run
 ```

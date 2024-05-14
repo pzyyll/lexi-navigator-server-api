@@ -25,6 +25,8 @@ class Settings(BaseSettings):
     translate_config: str | None = None
     static_path: str = os.path.join(app_path, "static/dist")
     openapi_key: str = ""
+    testing: bool = False
+    http_secure: bool = False
 
 
 settings = Settings()

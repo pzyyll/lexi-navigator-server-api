@@ -5,7 +5,7 @@ from datetime import datetime
 from pydantic import BaseModel, Field, ValidationError, validator
 from passlib.context import CryptContext
 
-from mongoengine import StringField, EmailField, DateTimeField, UUIDField, LongField
+from mongoengine import StringField, EmailField, DateTimeField, UUIDField, LongField, BooleanField
 from app.common.db.fields import PasswordField
 from app.common.db.basedoc import BaseDocument
 
@@ -57,6 +57,8 @@ class UserInDB(BaseDocument):
     updated_at = DateTimeField(default=datetime.now)
     login_token_version = LongField(default=1)
     api_token_version = LongField(default=1)
+    activated = BooleanField(default=False)
+    
 
     meta = {
         "collection": "users",

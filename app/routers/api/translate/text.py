@@ -11,7 +11,6 @@ from fastapi import UploadFile, File
 
 from app.common.google_api.gvision import GoogleVision
 
-
 gvision = GoogleVision()
 
 

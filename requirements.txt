@@ -11,6 +11,7 @@ langdetect
 google-cloud-translate
 google-cloud-texttospeech
 google-cloud-vision
+google-cloud-documentai
 PySocks
 colorama
 python-dotenv
