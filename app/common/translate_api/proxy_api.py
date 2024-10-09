@@ -181,7 +181,7 @@ class ProxyAPIs(BaseTranslateAPI):
         if not to_lang:
             from_lang = kwargs.get("from_lang", None)
             if not from_lang:
-                from_lang = self.detect_language(text, **kwargs).get("language_code")
+                from_lang = self.detect_language(text).get("language_code")
             to_lang = "en" if from_lang.lower().startswith("zh") else "zh"
 
         if self._default_api:
