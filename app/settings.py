@@ -7,10 +7,12 @@ path_helper = PathHelper()
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(case_sensitive=False,
-                                      env_prefix="LN_",
-                                      env_file=".env-release",
-                                      validate_default=False)
+    model_config = SettingsConfigDict(
+        case_sensitive=False,
+        env_prefix="LN_",
+        env_file=".env-release",
+        validate_default=False,
+    )
 
     app_name: str = "Lexi Navigator"
     mongodb_url: str = "mongodb://localhost:27017/test"
@@ -27,6 +29,8 @@ class Settings(BaseSettings):
     openapi_key: str = ""
     testing: bool = False
     http_secure: bool = False
+    google_search_id: str = ""
+    google_search_key: str = ""
 
 
 settings = Settings()

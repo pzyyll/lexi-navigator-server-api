@@ -1,6 +1,5 @@
 import io
 import asyncio
-import pathlib
 from . import router
 from fastapi import Depends, Request
 from fastapi.responses import StreamingResponse
@@ -8,10 +7,7 @@ from ..auth.token import get_token_user
 from app.models.user import UserInDB
 
 from app.common.speech_api.gspeech import GSpeechAsyncClient
-from app.settings import settings
 from app.utils.limiter import limiter
-
-from urllib.parse import quote
 
 gspeech = GSpeechAsyncClient()
 
