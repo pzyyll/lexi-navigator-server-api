@@ -1,0 +1,82 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "Custom Search API",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "https://lexin.pzyyll.top"
+        }
+    ],
+    "paths": {
+        "/api/search/google": {
+            "get": {
+                "operationId": "GoogleSearch",
+                "deprecated": false,
+                "summary": "Custom Search Query",
+                "description": "Run google search and get the information.",
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "Rust"
+                        },
+                        "description": "The search query string."
+                    },
+                    {
+                        "name": "lowRange",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "example": "1"
+                        },
+                        "description": "The lower bound of a range. Use lowRange and highRange to append an inclusive search range of lowRange...highRange to the query."
+                    },
+                    {
+                        "name": "highRange",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "example": "10"
+                        },
+                        "description": "The upper bound of a range. Use lowRange and highRange to append an inclusive search range of lowRange...highRange to the query."
+                    },
+                    {
+                        "name": "num",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        },
+                        "description": "The number of search results to return. The maximum value is 10."
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "example": "date"
+                        },
+                        "description": "Sorting expression to be applied to the results. The sorting parameter specifies how to sort the results based on the specified expression, such as sorting by date. Example: sort=date."
+                    },
+                    {
+                        "name": "start",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        },
+                        "description": "The index of the first result to return. The default number of results per page is 10, so &start=11 will start from the top of the second page of results. Note: The JSON API will never return more than 100 results, even if there are more than 100 documents that match the query, so setting the sum of start + num to a number greater than 100 will also result in an error. Also, note that the maximum value for num is 10."
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {}
+    }
+}
