@@ -305,6 +305,7 @@ case "$1" in
     init_submodule
     ;;
 "init-service")
+    # init_pyenv
     init_service
     ;;
 "run-mongodb")
