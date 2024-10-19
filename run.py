@@ -32,4 +32,8 @@ if __name__ == "__main__":
             "reload": True,
             "log_level": "debug",
         }
+
+    if "uds" in config:
+        config.pop("host", None)
+        config.pop("port", None)
     uvicorn.run("app.main:app", **config)

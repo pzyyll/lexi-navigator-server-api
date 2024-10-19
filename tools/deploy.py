@@ -5,7 +5,7 @@ import ipaddress
 import secrets
 import sys
 
-PROJECT_NAME = "lexinavigator"
+PROJECT_NAME = "lexin"
 PROJECT_PATH = pathlib.Path(__file__).parent.parent.resolve()
 TOOLS_PATH = pathlib.Path(__file__).parent.resolve()
 ENV_BIN_DIR = pathlib.Path(PROJECT_PATH, ".venv/bin").resolve()
@@ -18,21 +18,27 @@ CONFIG_TEMPLATE_PATH = pathlib.Path(TOOLS_PATH, "config_templates").resolve()
 
 
 def get_template_outout_path(template_name, output_path, rename=""):
-    outname = rename or pathlib.Path(template_name).stem
+    outname = rename or template_name
     template_path = pathlib.Path(CONFIG_TEMPLATE_PATH, template_name).resolve()
     outpath = pathlib.Path(output_path, outname).resolve()
     return template_path, outpath
 
 
 DEFAULT_ENV_FILE_TEMPLATE, DEFAULT_ENV_FILE = get_template_outout_path(
-    "env.template", PROJECT_PATH, rename=".env-release")
+    "template.env", PROJECT_PATH, rename=".env-release"
+)
 
 DEFAULT_SERVICE_TEMPLATE, DEFAULT_SERVICE_FILE = get_template_outout_path(
-    "service.template", "/etc/systemd/system/", rename=f"{PROJECT_NAME}.service")
+    "template.service", "/etc/systemd/system/", rename=f"{PROJECT_NAME}.service"
+)
 
 DEFAULT_UVICORN_TEMPLATE, DEFAULT_UVICORN_CONF = get_template_outout_path(
-    "uvicorn_conf.py.template", DEFAULT_CONFIG_PATH)
+    "uvicorn_conf.py", DEFAULT_CONFIG_PATH
+)
 
+DEFAULT_LOG_CONFIG_TEMPLATE, DEFAULT_LOG_CONFIG = get_template_outout_path(
+    "log_config.json", DEFAULT_CONFIG_PATH
+)
 
 colorama.init(autoreset=True)
 
@@ -49,7 +55,8 @@ def write_to_file(file_path, content):
 def prompt_yes_or_no(prompt):
     while True:
         response = input(
-            f"{colorama.Fore.YELLOW}{prompt} {colorama.Fore.GREEN}(y/n)  ").lower()
+            f"{colorama.Fore.YELLOW}{prompt} {colorama.Fore.GREEN}(y/n)  "
+        ).lower()
         if response in ["y", "yes"]:
             return True
         elif response in ["n", "no"]:
@@ -57,9 +64,22 @@ def prompt_yes_or_no(prompt):
         else:
             print(
                 f"{colorama.Style.BRIGHT+colorama.Fore.RED}Invalid answer."
-                f"Please quesion {colorama.Fore.GREEN}'y' {colorama.Fore.RED}or {colorama.Fore.GREEN}'n'.")
+                f"Please quesion {colorama.Fore.GREEN}'y' {colorama.Fore.RED}or {colorama.Fore.GREEN}'n'."
+            )
             continue
 
+def init_log_config():
+    if pathlib.Path(DEFAULT_LOG_CONFIG).exists():
+        if not prompt_yes_or_no(
+            f"{colorama.Fore.YELLOW}{DEFAULT_LOG_CONFIG} already exists. Do you want to overwrite it?"
+        ):
+            return
+
+    with open(DEFAULT_LOG_CONFIG_TEMPLATE, "r") as f:
+        content = f.read()
+        content = content.replace("{{LOG_PATH}}", str(DEFAULT_LOG_PATH))
+
+    write_to_file(DEFAULT_LOG_CONFIG, content)
 
 def init_uvicorn_conf():
     if pathlib.Path(DEFAULT_UVICORN_CONF).exists():
@@ -72,8 +92,7 @@ def init_uvicorn_conf():
         content = f.read()
 
     while True:
-        ipaddr = input(
-            f"{colorama.Fore.YELLOW}Bin IP (default 127.0.0.1:8000): ")
+        ipaddr = input(f"{colorama.Fore.YELLOW}Bin IP (default 127.0.0.1:8000): ")
         if not ipaddr:
             ip = "127.0.0.1"
             port = 8000
@@ -91,6 +110,7 @@ def init_uvicorn_conf():
             continue
     content = content.replace("{{HOST}}", ip)
     content = content.replace("{{PORT}}", str(port))
+    content = content.replace("{{LOG_CONFIG}}", str(DEFAULT_LOG_CONFIG))
 
     write_to_file(DEFAULT_UVICORN_CONF, content)
 
@@ -98,7 +118,7 @@ def init_uvicorn_conf():
 def init_env_conf():
     if pathlib.Path(DEFAULT_ENV_FILE).exists():
         if not prompt_yes_or_no(
-                f"{colorama.Fore.YELLOW}{DEFAULT_ENV_FILE} already exists. Do you want to overwrite it?"
+            f"{colorama.Fore.YELLOW}{DEFAULT_ENV_FILE} already exists. Do you want to overwrite it?"
         ):
             return
 
@@ -109,8 +129,10 @@ def init_env_conf():
     content = content.replace("{{SECRET_KEY}}", secrets.token_hex(32))
     content = content.replace("{{SIGNUP_SECRET_KEY}}", secrets.token_hex(32))
     content = content.replace("{{APP_DATA_PATH}}", str(DEFAULT_APP_DATA_PATH))
-    content = content.replace("{{STATIC_PATH}}", str(pathlib.Path(
-        DEFAULT_APP_DATA_PATH, "static/dist").resolve()))
+    content = content.replace(
+        "{{STATIC_PATH}}",
+        str(pathlib.Path(DEFAULT_APP_DATA_PATH, "static/dist").resolve()),
+    )
     write_to_file(DEFAULT_ENV_FILE, content)
 
 
@@ -128,16 +150,18 @@ def init_nginx_conf():
 
     if pathlib.Path(nginx_config_dir).exists():
         if not prompt_yes_or_no(
-                f"{colorama.Fore.YELLOW}{nginx_config_dir} already exists. Do you want to overwrite it?"
+            f"{colorama.Fore.YELLOW}{nginx_config_dir} already exists. Do you want to overwrite it?"
         ):
             return
 
     if os.path.isdir(os.path.join(nginx_config_dir, "sites-available")):
-        nginx_config_file = os.path.join(nginx_config_dir, "sites-available",
-                                         f"{PROJECT_NAME}.conf")
+        nginx_config_file = os.path.join(
+            nginx_config_dir, "sites-available", f"{PROJECT_NAME}.conf"
+        )
     elif os.path.isdir(os.path.join(nginx_config_dir, "conf.d")):
-        nginx_config_file = os.path.join(nginx_config_dir, "conf.d",
-                                         f"{PROJECT_NAME}.conf")
+        nginx_config_file = os.path.join(
+            nginx_config_dir, "conf.d", f"{PROJECT_NAME}.conf"
+        )
     else:
         print(f"{colorama.Fore.RED}Nginx config path not found!!!")
         return
@@ -152,7 +176,8 @@ def init_nginx_conf():
 
     local_server_ip = input(
         f"{colorama.Fore.YELLOW}Enter the local server ip"
-        f" and port (default {colorama.Fore.GREEN}: http://127.0.0.1:8000): ")
+        f" and port (default {colorama.Fore.GREEN}: http://127.0.0.1:8000): "
+    )
 
     template_file = get_template_outout_path("nginx.conf.template", "")
     with open(template_file, "r") as f:
@@ -173,6 +198,7 @@ def init_nginx_conf():
 def init_service_conf():
     import pwd
     import grp
+
     uid = os.getuid()
     userinfo = pwd.getpwuid(uid)
     group_info = grp.getgrgid(userinfo.pw_gid)
@@ -193,11 +219,12 @@ def init_service_conf():
     content = content.replace("{{WORKING_DIR}}", str(PROJECT_PATH))
     content = content.replace("{{ENV_BIN_DIR}}", str(ENV_BIN_DIR))
     content = content.replace(
-        "{{RUN_SCRIPT}}", f"{ENV_BIN_DIR}/python {PROJECT_PATH}/run.py")
-    content = content.replace("{{LOG_FILE}}", str(
-        DEFAULT_LOG_PATH / "access.log"))
-    content = content.replace("{{ERROR_LOG_FILE}}",
-                              str(DEFAULT_LOG_PATH / "error.log"))
+        "{{RUN_SCRIPT}}", f"{ENV_BIN_DIR}/python {PROJECT_PATH}/run.py"
+    )
+    # content = content.replace("{{LOG_FILE}}", str(
+    #     DEFAULT_LOG_PATH / "access.log"))
+    # content = content.replace("{{ERROR_LOG_FILE}}",
+    #                           str(DEFAULT_LOG_PATH / "error.log"))
     content = content.replace("{{OPTIONS}}", "")
 
     write_to_file(DEFAULT_SERVICE_FILE, content)
@@ -216,6 +243,7 @@ if __name__ == "__main__":
     cmd = sys.argv[1] if len(sys.argv) > 1 else ""
     if cmd == "init-conf":
         init_env_conf()
+        init_log_config()
         init_uvicorn_conf()
         init_default_app_data_dir()
     elif cmd == "init-nginx":
