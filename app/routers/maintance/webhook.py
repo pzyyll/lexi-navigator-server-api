@@ -33,19 +33,26 @@ async def verify_signature(request: Request):
 async def push(request: Request):
     await verify_signature(request)
 
-    # Do something with the push event
-    # chdir to app_path
     logger.info("Pulling the latest changes from the repository")
 
-    os.chdir(app_path)
+    try:
+        os.chdir(app_path)
+    except Exception as e:
+        logger.error(f"Failed to change directory to {app_path}: {e}")
+        return {"message": "failed to change directory"}
 
     result = subprocess.run(["git", "pull"], capture_output=True, text=True)
     if result.returncode == 0:
         logger.info(f"Git pull successful: {result.stdout}")
     else:
         logger.error(f"Git pull failed: {result.stderr}")
+        return {"message": "git pull failed"}
 
-    logger.info("Restarting the application ", settings.app_name)
-    subprocess.Popen(["sudo", "systemctl", "restart", settings.app_name])
+    logger.info(f"Restarting the application {settings.app_name}")
+    try:
+        subprocess.Popen(["sudo", "systemctl", "restart", settings.app_name], shell=False)
+    except Exception as e:
+        logger.error(f"Failed to restart the application: {e}")
+        return {"message": "failed to restart application"}
 
     return {"message": "ok"}
