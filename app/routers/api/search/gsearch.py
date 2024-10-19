@@ -1,4 +1,5 @@
 import httpx
+import logging
 
 from fastapi import HTTPException, Request, Response
 
@@ -9,7 +10,7 @@ from app.settings import settings
 TARGET_URL = "https://customsearch.googleapis.com/customsearch/v1"
 
 
-@router.get("/")
+@router.get("/google")
 async def search(request: Request):
     headers = dict(request.headers)
     headers.pop("host", None)
@@ -19,7 +20,7 @@ async def search(request: Request):
     params["key"] = settings.google_search_key
 
     data = await request.body()
-
+   
     async with httpx.AsyncClient() as client:
         try:
             response = await client.request(

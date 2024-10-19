@@ -27,8 +27,9 @@ if __name__ == "__main__":
             config = {k: v for k, v in vars(config).items() if not k.startswith("__")}
     else:
         config = {
-            "host": "localhost",
-            "port": 8000,
-            "reload": True
+            "host": "127.0.0.1",
+            "port": 8888,
+            "reload": True,
+            "log_level": "debug"
         }
     uvicorn.run("app.main:app", **config)

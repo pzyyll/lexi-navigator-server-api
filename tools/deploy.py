@@ -109,8 +109,8 @@ def init_env_conf():
     content = content.replace("{{SECRET_KEY}}", secrets.token_hex(32))
     content = content.replace("{{SIGNUP_SECRET_KEY}}", secrets.token_hex(32))
     content = content.replace("{{APP_DATA_PATH}}", str(DEFAULT_APP_DATA_PATH))
-    content = content.replace("{{STATIC_PATH}}", pathlib.Path(
-        DEFAULT_APP_DATA_PATH, "static/dist").resolve())
+    content = content.replace("{{STATIC_PATH}}", str(pathlib.Path(
+        DEFAULT_APP_DATA_PATH, "static/dist").resolve()))
     write_to_file(DEFAULT_ENV_FILE, content)
 
 
