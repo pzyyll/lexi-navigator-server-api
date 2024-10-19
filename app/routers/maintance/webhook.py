@@ -1,10 +1,13 @@
 from fastapi import HTTPException, Request
 from . import router
 
-from app.settings import settings
+from app.settings import settings, app_path
 
 import hmac
 import hashlib
+import subprocess
+import os
+import logging
 
 
 async def verify_signature(request: Request):
@@ -30,6 +33,18 @@ async def push(request: Request):
     await verify_signature(request)
 
     # Do something with the push event
-    
+    # chdir to app_path
+    logging.info("Pulling the latest changes from the repository")
+
+    os.chdir(app_path)
+
+    result = subprocess.run(["git", "pull"], capture_output=True, text=True)
+    if result.returncode == 0:
+        logging.info(f"Git pull successful: {result.stdout}")
+    else:
+        logging.error(f"Git pull failed: {result.stderr}")
+
+    logging.info("Restarting the application ", settings.app_name)
+    subprocess.Popen(["sudo", "systemctl", "restart", settings.app_name])
 
     return {"message": "ok"}

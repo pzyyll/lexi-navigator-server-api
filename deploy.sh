@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PROJECT_NAME="lexinavigator"
+PROJECT_NAME="lexin"
 CURRENT_PATH="$(pwd)"
 USER=$(whoami)
 GROUP=$(id -g -n $USER)
