@@ -30,6 +30,6 @@ if __name__ == "__main__":
             "host": "127.0.0.1",
             "port": 8888,
             "reload": True,
-            "log_level": "debug"
+            "log_level": "debug",
         }
     uvicorn.run("app.main:app", **config)

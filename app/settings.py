@@ -31,6 +31,7 @@ class Settings(BaseSettings):
     http_secure: bool = False
     google_search_id: str = ""
     google_search_key: str = ""
+    webhook_secret: str = ""
 
 
 settings = Settings()
