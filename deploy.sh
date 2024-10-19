@@ -302,6 +302,9 @@ case "$1" in
 "init-submodule")
     init_submodule
     ;;
+"init_service")
+    init_service
+    ;;
 "run-mongodb")
     run_mongodb
     ;;
