@@ -217,7 +217,11 @@ def init_service_conf():
     content = content.replace("{{USER}}", user_name)
     content = content.replace("{{GROUP}}", group_name)
     content = content.replace("{{WORKING_DIR}}", str(PROJECT_PATH))
-    content = content.replace("{{ENV_BIN_DIR}}", str(ENV_BIN_DIR))
+
+    path_env = os.environ.get("PATH", "")
+    content = content.replace("{{ENV_BIN_DIR}}", f"{path_env}:{ENV_BIN_DIR}")
+
+    # content = content.replace("{{ENV_BIN_DIR}}", str(ENV_BIN_DIR))
     content = content.replace(
         "{{RUN_SCRIPT}}", f"{ENV_BIN_DIR}/python {PROJECT_PATH}/run.py"
     )
@@ -226,6 +230,7 @@ def init_service_conf():
     # content = content.replace("{{ERROR_LOG_FILE}}",
     #                           str(DEFAULT_LOG_PATH / "error.log"))
     content = content.replace("{{OPTIONS}}", "")
+    # print("content: ", content)
 
     write_to_file(DEFAULT_SERVICE_FILE, content)
 
