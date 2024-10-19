@@ -275,14 +275,16 @@ up() {
 }
 
 help() {
-    echo "Usage: $0 [init|init-pyenv|init-submodule|run-mongodb|run|up|help]"
+    echo "Usage: $0 [init|init-pyenv|init-submodule|init-service|run-mongodb|run|up|help]"
     echo "  init: Initialize the project."
     echo "  init-pyenv: Initialize python environment."
     echo "  init-submodule: Initialize git submodule."
+    echo "  init-service: Initialize service."
     echo "  run-mongodb: Run mongodb service."
     echo "  run: Run the server."
     echo "  up: Update the project."
     echo "  help: Show this help message."
+    exit 1
 }
 
 # Check python version
@@ -302,7 +304,7 @@ case "$1" in
 "init-submodule")
     init_submodule
     ;;
-"init_service")
+"init-service")
     init_service
     ;;
 "run-mongodb")
