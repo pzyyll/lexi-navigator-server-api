@@ -2,6 +2,7 @@ import httpx
 import logging
 
 from fastapi import HTTPException, Request, Response
+from fastapi.responses import JSONResponse
 
 from . import router
 from app.settings import settings
@@ -20,7 +21,7 @@ async def search(request: Request):
     params["key"] = settings.google_search_key
 
     data = await request.body()
-   
+
     async with httpx.AsyncClient() as client:
         try:
             response = await client.request(
@@ -33,7 +34,7 @@ async def search(request: Request):
             return Response(
                 content=response.content,
                 status_code=response.status_code,
-                headers=dict(response.headers),
+                media_type=response.headers["Content-Type"],
             )
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
