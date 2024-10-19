@@ -9,6 +9,7 @@ import subprocess
 import os
 import logging
 
+logger = logging.getLogger("uvicorn")
 
 async def verify_signature(request: Request):
     signature = request.headers.get("X-Hub-Signature-256")
@@ -34,17 +35,17 @@ async def push(request: Request):
 
     # Do something with the push event
     # chdir to app_path
-    logging.info("Pulling the latest changes from the repository")
+    logger.info("Pulling the latest changes from the repository")
 
     os.chdir(app_path)
 
     result = subprocess.run(["git", "pull"], capture_output=True, text=True)
     if result.returncode == 0:
-        logging.info(f"Git pull successful: {result.stdout}")
+        logger.info(f"Git pull successful: {result.stdout}")
     else:
-        logging.error(f"Git pull failed: {result.stderr}")
+        logger.error(f"Git pull failed: {result.stderr}")
 
-    logging.info("Restarting the application ", settings.app_name)
+    logger.info("Restarting the application ", settings.app_name)
     subprocess.Popen(["sudo", "systemctl", "restart", settings.app_name])
 
     return {"message": "ok"}
